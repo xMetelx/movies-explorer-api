@@ -7,7 +7,6 @@ const helmet = require('helmet');
 const cors = require('cors');
 const config = require('./utils/config');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
-const InternalError = require('./utils/errors/InternalError');
 const Routers = require('./routes/index');
 
 const app = express();
@@ -34,14 +33,16 @@ mongoose.connect(config.serverDb, {
   .then(() => console.log('Mongo is ON'))
   .catch((err) => console.log(err.message));
 
+app.use(requestLogger);
+
+app.use(limiter);
+
 app.use(cors(options));
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(helmet());
-app.use(limiter);
-app.use(requestLogger);
 
 app.use(Routers);
 
@@ -49,7 +50,16 @@ app.use(errorLogger);
 app.use(errors());
 
 app.use((err, req, res, next) => {
-  next(new InternalError(err.message));
+  const { statusCode = 500, message } = err;
+  console.log(err);
+  res
+    .status(statusCode)
+    .send({
+      message: statusCode === 500
+        ? err.message
+        : message,
+    });
+  next();
 });
 
 app.listen(PORT, () => {

@@ -1,6 +1,5 @@
 const { celebrate, Joi } = require('celebrate');
-
-const testExpression = /^( http|https):\/\/(www\.)?([a-z0-9._])+([\w+\-\-._~:/?#[\]!$&’()*+,;=-])+(#?)/;
+const validator = require('validator');
 
 const {
   CHECK_EMAIL_ERROR,
@@ -10,7 +9,7 @@ const {
 
 const userValidation = celebrate({
   body: Joi.object().keys({
-    name: Joi.string().min(2).max(30),
+    name: Joi.string().required().min(2).max(30),
     email: Joi.string().email().required().messages({
       'string.empty': CHECK_EMAIL_ERROR,
     }),
@@ -40,6 +39,9 @@ const userIdValidation = celebrate({
 const profileValidation = celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30).required(),
+    email: Joi.string().email().required().messages({
+      'string.empty': CHECK_EMAIL_ERROR,
+    }),
   }),
 });
 
@@ -50,14 +52,23 @@ const movieValidation = celebrate({
     duration: Joi.number().required(),
     year: Joi.string().required(),
     description: Joi.string().required(),
-    image: Joi.string().regex(testExpression).messages({
-      'string.base': NOT_FOUND_URL,
+    image: Joi.string().required().custom((value, helpers) => {
+      if (validator.isURL(value)) {
+        return value;
+      }
+      return helpers.message(NOT_FOUND_URL);
     }),
-    trailerLink: Joi.string().regex(testExpression).messages({
-      'string.base': NOT_FOUND_URL,
+    trailerLink: Joi.string().required().custom((value, helpers) => {
+      if (validator.isURL(value)) {
+        return value;
+      }
+      return helpers.message(NOT_FOUND_URL);
     }),
-    thumbnail: Joi.string().regex(testExpression).messages({
-      'string.base': NOT_FOUND_URL,
+    thumbnail: Joi.string().required().custom((value, helpers) => {
+      if (validator.isURL(value)) {
+        return value;
+      }
+      return helpers.message(NOT_FOUND_URL);
     }),
     movieId: Joi.number().required(),
     nameRU: Joi.string().required(),

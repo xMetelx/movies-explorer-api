@@ -76,7 +76,7 @@ module.exports.deleteMovie = (req, res, next) => Movie.findById(req.params._id)
   })
   .catch((err) => {
     if (err.name === 'CastError') {
-      next(BadRequestError(BAD_REQUEST_ERROR));
+      next(new BadRequestError(BAD_REQUEST_ERROR));
     } else {
       next(err);
     }
