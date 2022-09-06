@@ -10,7 +10,6 @@ const config = require('../utils/config');
 const {
   NOT_FOUND_USER_ID,
   BAD_REQUEST_ERROR,
-  CAST_ERROR,
   CONFLICT_ERROR,
   VALIDATION_ERROR,
 } = require('../utils/errors/errors');
@@ -22,13 +21,7 @@ module.exports.getUser = (req, res, next) => {
     .then((user) => {
       res.status(200).send({ name: user.name, email: user.email });
     })
-    .catch((err) => {
-      if (err.name === CAST_ERROR) {
-        next(new BadRequestError(BAD_REQUEST_ERROR));
-      } else {
-        next(err);
-      }
-    });
+    .catch(next);
 };
 
 module.exports.createUser = (req, res, next) => {
@@ -71,17 +64,21 @@ module.exports.login = (req, res, next) => {
 
 module.exports.patchProfile = (req, res, next) => {
   const userId = req.user._id;
-  const { name } = req.body;
-  User.findByIdAndUpdate(userId, { name }, { new: true, runValidators: true })
+  const { name, email } = req.body;
+  User.findByIdAndUpdate(userId, { name, email }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
         throw NotFoundError(NOT_FOUND_USER_ID);
       }
-      res.status(200).send({ name: user.name });
+      res.status(200).send({ name: user.name, email: user.email });
     })
     .catch((err) => {
       if (err.name === VALIDATION_ERROR) {
         next(new BadRequestError(BAD_REQUEST_ERROR));
+        return;
+      }
+      if (err.code === 11000) {
+        next(new ConflictError(CONFLICT_ERROR));
         return;
       }
       next(err);

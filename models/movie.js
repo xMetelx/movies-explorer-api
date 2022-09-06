@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
-
-const regex = /^( http|https):\/\/(www\.)?([a-z0-9._])+([\w+\-\-._~:/?#[\]!$&’()*+,;=-])+(#?)/;
+const validator = require('validator');
+const { NOT_FOUND_URL } = require('../utils/errors/errors');
 
 const movieSchema = new mongoose.Schema({
   country: {
@@ -27,22 +27,30 @@ const movieSchema = new mongoose.Schema({
     type: String,
     required: true,
     validate: {
-      validator: (link) => regex.test(link),
+      validator: (v) => {
+        return validator.isURL(v);
+      },
+      message: NOT_FOUND_URL,
     },
-    message: 'Передайте ссылку',
   },
   trailerLink: {
     type: String,
     required: true,
     validate: {
-      validator: (link) => regex.test(link),
+      validator: (v) => {
+        return validator.isURL(v);
+      },
+      message: NOT_FOUND_URL,
     },
   },
   thumbnail: {
     type: String,
     required: true,
     validate: {
-      validator: (link) => regex.test(link),
+      validator: (v) => {
+        return validator.isURL(v);
+      },
+      message: NOT_FOUND_URL,
     },
   },
   owner: {
