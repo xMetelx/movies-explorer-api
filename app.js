@@ -10,13 +10,14 @@ const { requestLogger, errorLogger } = require('./middlewares/logger');
 const Routers = require('./routes/index');
 
 const app = express();
-const { PORT = 3000 } = process.env;
+const { PORT = 3001 } = process.env;
 
 const limiter = require('./utils/limiter');
 
 const options = {
   origin: [
     'http://localhost:3000',
+    // 'http://localhost:3001',
     'http://metel.nomorepartiesxyz.ru',
     'https://metel.nomorepartiesxyz.ru',
   ],

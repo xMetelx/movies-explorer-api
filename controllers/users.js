@@ -68,7 +68,7 @@ module.exports.patchProfile = (req, res, next) => {
   User.findByIdAndUpdate(userId, { name, email }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
-        throw NotFoundError(NOT_FOUND_USER_ID);
+        throw new NotFoundError(NOT_FOUND_USER_ID);
       }
       res.status(200).send({ name: user.name, email: user.email });
     })

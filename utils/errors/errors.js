@@ -11,7 +11,7 @@ const CONFLICT_ERROR = 'Пользователь с такими данными 
 const UNAUTHORIZED_ERROR = 'Требуется авторизация';
 const CHECK_EMAIL_ERROR = 'Проверьте email';
 const CHECK_PASSWORD_ERROR = 'Проверьте пароль';
-const USER_DOESNT_EXIST = 'Пользователь не существует';
+const USER_DOESNT_EXIST = 'Неправильная почта или пароль';
 
 module.exports = {
   BAD_REQUEST_ERROR,
