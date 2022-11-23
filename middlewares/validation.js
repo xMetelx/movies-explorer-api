@@ -38,8 +38,8 @@ const userIdValidation = celebrate({
 
 const profileValidation = celebrate({
   body: Joi.object().keys({
-    name: Joi.string().min(2).max(30).required(),
-    email: Joi.string().email().required().messages({
+    name: Joi.string().min(2).max(30),
+    email: Joi.string().email().messages({
       'string.empty': CHECK_EMAIL_ERROR,
     }),
   }),
